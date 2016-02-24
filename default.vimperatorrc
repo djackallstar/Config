@@ -1,0 +1,788 @@
+"set editor="gvim -f"
+"set runtimepath=~/.vimperator
+set hlsearch
+set noincsearch
+set ignorecase
+set smartcase
+set focuscontent
+set urlseparator='(\||(\r\n?|\n)+)'
+let mapleader=","
+set titlestring=
+set defsearch=g
+set insertmode
+set showstatuslinks=2
+set history=3
+set messages=3
+set showmode
+"set notimeout
+set nofullscreen
+"set nextpattern+='\s*(下|後|后|次)\s*(一?(個|个)?)\s*((主(題|题))|((項|项)目?)|(則|则)|篇|幅|章|(節|节)|本|卷|集|回|(話|话)|(張|张)|(頁|页)|へ)\s*'
+"set previouspattern+='\s*(上|前)\s*(一?(個|个)?)\s*((主(題|题))|((項|项)目?)|(則|则)|篇|幅|章|(節|节)|本|卷|集|回|(話|话)|(張|张)|(頁|页)|へ)\s*'
+"set yankshort=
+set noerrorbells
+set novisualbell
+set complete=slf
+
+javascript <<EOF
+my_eol = (/win/i.test(navigator.platform)?'\r\n':'\n')
+EOF
+
+nnoremap <f1>            <nop>
+inoremap <f1>            <nop>
+cnoremap <f1>            <nop>
+
+cnoremap \'              \'
+cnoremap <c-\'>          '
+cnoremap <a-\'>          '
+
+nnoremap b               B
+nnoremap B               b
+
+nnoremap e               :tabopen! <s-insert><c-a><right><right><right><right><right><right><right><right><space>
+nnoremap <leader>e       :open <s-insert><c-a><right><right><right><right><space>
+nnoremap E               mJ:tabopen <s-insert><c-a><right><right><right><right><right><right><right><space>
+nnoremap ve              :js dactyl_adjacent('<space><s-insert>',1)<c-a><right><right><right><right><right><right><right><right><right><right><right><right><right><right><right><right><right><right><right><right>
+nnoremap v<leader>e      :js dactyl_adjacent('<space><s-insert>',2)<c-a><right><right><right><right><right><right><right><right><right><right><right><right><right><right><right><right><right><right><right><right>
+nnoremap vE              mJ:js dactyl_adjacent('<space><s-insert>',3)<c-a><right><right><right><right><right><right><right><right><right><right><right><right><right><right><right><right><right><right><right><right>
+javascript <<EOF
+dactyl_adjacent = function(user_input, open_option)
+{
+    if(open_option==1)
+    {
+        var len_1 = gBrowser.mTabs.length
+        var right_tab_position = gBrowser.mCurrentTab._tPos + 1
+        liberator.execute('tabopen! '+user_input)
+        var len_2 = gBrowser.mTabs.length
+        if( len_2 > len_1 )
+        {
+            gBrowser.moveTabTo(gBrowser.mTabs[gBrowser.mTabs.length-1],right_tab_position)
+        }
+    }
+    else if(open_option==2)
+    {
+        liberator.execute('open '+user_input)
+    }
+    else if(open_option==3)
+    {
+        var len_1 = gBrowser.mTabs.length
+        var right_tab_position = gBrowser.mCurrentTab._tPos + 1
+        liberator.execute('tabopen '+user_input)
+        var len_2 = gBrowser.mTabs.length
+        if( len_2 > len_1 )
+        {
+            gBrowser.moveTabTo(gBrowser.mTabs[gBrowser.mCurrentTab._tPos],right_tab_position)
+        }
+    }
+}
+EOF
+
+nnoremap f               F
+nnoremap <leader>f       f
+nnoremap F               mJ;t
+"nnoremap vf              ???
+nnoremap v<leader>f      ;o
+"nnoremap vF              ???
+
+nnoremap p                  <nop>
+nnoremap P                  <nop>
+nnoremap <leader>p          gP
+nnoremap <leader><leader>p  p
+nnoremap <leader>P          mJP
+nnoremap vp                 :js paste_url_in_clipboard(true, true)<cr>
+nnoremap v<leader>p         p
+nnoremap vP                 mJ:js paste_url_in_clipboard(false, true)<cr>
+javascript <<EOF
+paste_url_in_clipboard = function(background, adjacent)
+{
+    if( window.content.document.location.toString() == 'about:blank' ) { liberator.execute("normal! p"); return; }
+    var original_tab_position = gBrowser.mCurrentTab._tPos
+    var len_1 = gBrowser.mTabs.length
+    var right_tab_position = gBrowser.mCurrentTab._tPos + 1
+    liberator.execute("normal! P")
+    var len_2 = gBrowser.mTabs.length
+    if( len_2 > len_1 )
+    {
+        if(adjacent) { gBrowser.moveTabTo(gBrowser.mTabs[gBrowser.mCurrentTab._tPos],right_tab_position) }
+        if(background) { gBrowser.mTabContainer.selectedIndex = original_tab_position }
+    }
+}
+EOF
+
+nnoremap r               <nop>
+nnoremap R               <nop>
+nnoremap <leader>r       r
+nnoremap <leader>R       R
+
+nnoremap t               :tabopen!<space>
+nnoremap <leader>t       :open<space>
+nnoremap T               mJ:tabopen<space>
+nnoremap vt              :js dactyl_adjacent('',1)<left><left><left><left>
+nnoremap v<leader>t      :js dactyl_adjacent('',2)<left><left><left><left>
+nnoremap vT              mJ:js dactyl_adjacent('',3)<left><left><left><left>
+
+nnoremap u               :js restore_closed_tab(true, false)<cr>
+"nnoremap <leader>u       ???
+nnoremap U               :js restore_closed_tab(false, false)<cr>
+nnoremap vu              :js restore_closed_tab(true, true)<cr>
+"nnoremap v<leader>u      ???
+nnoremap vU              :js restore_closed_tab(false, true)<cr>
+javascript <<EOF
+restore_closed_tab = function(background, adjacent)
+{
+    //if( window.content.document.location.toString() == 'about:blank' ) { ??? }
+    var original_tab_position = gBrowser.mCurrentTab._tPos
+    var len_1 = gBrowser.mTabs.length
+    var right_tab_position = gBrowser.mCurrentTab._tPos + 1
+    undoCloseTab(0)
+    var len_2 = gBrowser.mTabs.length
+    if( len_2 > len_1 )
+    {
+        if(gBrowser.mCurrentTab._tPos <= original_tab_position && adjacent && background) // vu
+        {
+            gBrowser.moveTabTo(gBrowser.mTabs[gBrowser.mCurrentTab._tPos],right_tab_position)
+            gBrowser.mTabContainer.selectedIndex = original_tab_position
+        }
+        else if(gBrowser.mCurrentTab._tPos <= original_tab_position && adjacent && !background) // vU
+        {
+            gBrowser.moveTabTo(gBrowser.mTabs[gBrowser.mCurrentTab._tPos],right_tab_position)
+        }
+        else if(gBrowser.mCurrentTab._tPos <= original_tab_position && !adjacent && background) // u
+        {
+            gBrowser.mTabContainer.selectedIndex = original_tab_position + 1
+        }
+        else if(gBrowser.mCurrentTab._tPos <= original_tab_position && !adjacent && !background) // U
+        {
+        }
+        else if(gBrowser.mCurrentTab._tPos > original_tab_position && adjacent && background) // vu
+        {
+            gBrowser.moveTabTo(gBrowser.mTabs[gBrowser.mCurrentTab._tPos],right_tab_position)
+            gBrowser.mTabContainer.selectedIndex = original_tab_position
+        }
+        else if(gBrowser.mCurrentTab._tPos > original_tab_position && adjacent && !background) // vU
+        {
+            gBrowser.moveTabTo(gBrowser.mTabs[gBrowser.mCurrentTab._tPos],right_tab_position)
+        }
+        else if(gBrowser.mCurrentTab._tPos > original_tab_position && !adjacent && background) // u
+        {
+            gBrowser.mTabContainer.selectedIndex = original_tab_position
+        }
+        else if(gBrowser.mCurrentTab._tPos > original_tab_position && !adjacent && !background) // U
+        {
+        }
+    }
+}
+EOF
+
+nnoremap <up>            <insert><up><insert>
+nnoremap <down>          <insert><down><insert>
+nnoremap <left>          <insert><left><insert>
+nnoremap <right>         <insert><right><insert>
+nnoremap w               <up>
+nnoremap s               <down>
+nnoremap a               <left>
+nnoremap d               <right>
+nnoremap h               20<left>
+nnoremap l               20<right>
+nnoremap j               <c-d>
+nnoremap k               <c-u>
+nnoremap zh              20<left>
+nnoremap zl              20<right>
+nnoremap zH              h
+nnoremap zL              l
+nnoremap q               d
+nnoremap gi              gi<c-e>
+nnoremap Q               q
+nnoremap A               :delbmarks<cr>
+
+nnoremap <c-c>           <insert><c-c><insert>
+nnoremap <c-v>           <insert><c-v><insert>
+nnoremap <c-x>           <insert><c-x><insert>
+nnoremap <c-y>           <insert><c-y><insert>
+nnoremap <c-z>           <insert><c-z><insert>
+inoremap <c-c>           <c-insert>
+inoremap <c-v>           <s-insert>
+inoremap <c-x>           <insert><c-x><insert>
+inoremap <c-y>           <insert><c-y><insert>
+inoremap <c-z>           <insert><c-z><insert>
+cnoremap <c-c>           <c-insert>
+cnoremap <c-v>           <s-insert>
+"cnoremap <c-x>           <insert><c-x><insert>
+"cnoremap <c-y>           <insert><c-y><insert>
+"cnoremap <c-z>           <insert><c-z><insert>
+
+nnoremap <c-s-c>         <insert><c-c><insert>
+nnoremap <c-s-v>         <insert><c-v><insert>
+inoremap <c-s-c>         <insert><c-c><insert>
+inoremap <c-s-v>         <insert><c-v><insert>
+cnoremap <c-s-c>         <c-c>
+cnoremap <c-s-v>         <c-v>
+
+nnoremap <c-j>           <cr>
+inoremap <c-a>           <home>
+inoremap <c-e>           <end>
+inoremap <c-b>           <left>
+inoremap <c-f>           <right>
+inoremap <a-b>           <c-left>
+inoremap <a-f>           <c-right>
+inoremap <c-p>           <up>
+inoremap <c-n>           <down>
+inoremap <c-j>           <cr>
+inoremap <c-h>           <bs>
+inoremap <c-d>           <del>
+inoremap <c-w>           <c-bs>
+inoremap <a-d>           <c-right><c-bs>
+inoremap <a-bs>          <c-bs>
+inoremap <c-u>           <c-u>
+inoremap <c-k>           <c-k>
+inoremap <c-t>           <s-left><c-x><right><c-v>
+inoremap <a-t>           <c-right><c-s-left><c-s-left><c-s-right><c-x><c-left><c-left><c-right><c-v>
+cnoremap <c-a>           <home>
+cnoremap <c-e>           <end>
+cnoremap <c-b>           <left>
+cnoremap <c-f>           <right>
+cnoremap <a-b>           <c-left>
+cnoremap <a-f>           <c-right>
+cnoremap <c-p>           <up>
+cnoremap <c-n>           <down>
+cnoremap <c-j>           <cr>
+cnoremap <c-h>           <bs>
+cnoremap <c-d>           <del>
+cnoremap <c-w>           <c-bs>
+cnoremap <a-d>           <c-right><c-bs>
+cnoremap <a-bs>          <c-bs>
+cnoremap <c-u>           <c-u>
+cnoremap <c-k>           <c-k>
+cnoremap <c-t>           <s-left><c-x><right><c-v>
+cnoremap <a-t>           <c-right><c-s-left><c-s-left><c-s-right><c-x><c-left><c-left><c-right><c-v>
+
+nmap <c-1>           :<c-p><c-a><c-right><c-right><c-u>tabopen!<space>
+nmap <c-2>           :<c-p><c-a><c-right><c-right><c-u>open<space>
+nmap <c-3>           :<c-p><c-a><c-right><c-right><c-u>tabopen<space>
+nmap <c-a-1>         :<c-p><c-a><c-right><c-right><c-u>js<space>dactyl_adjacent(<c-'><c-e><c-'>,1)<c-a><c-right><c-right><right><right><right><right><right><right><right><right><right><right>
+nmap <c-a-2>         :<c-p><c-a><c-right><c-right><c-u>js<space>dactyl_adjacent(<c-'><c-e><c-'>,2)<c-a><c-right><c-right><right><right><right><right><right><right><right><right><right><right>
+nmap <c-a-3>         :<c-p><c-a><c-right><c-right><c-u>js<space>dactyl_adjacent(<c-'><c-e><c-'>,3)<c-a><c-right><c-right><right><right><right><right><right><right><right><right><right><right>
+nmap <a-1>           :<c-p><c-e><c-w><bs><bs><c-a><c-right><c-right><c-right><c-u>tabopen!<space>
+nmap <a-2>           :<c-p><c-e><c-w><bs><bs><c-a><c-right><c-right><c-right><c-u>open<space>
+nmap <a-3>           :<c-p><c-e><c-w><bs><bs><c-a><c-right><c-right><c-right><c-u>tabopen<space>
+nmap <a-s-1>         :<c-p><c-e><left><bs>1<c-a><c-right><c-right><c-right><c-right><c-w>
+nmap <a-s-2>         :<c-p><c-e><left><bs>2<c-a><c-right><c-right><c-right><c-right><c-w>
+nmap <a-s-3>         :<c-p><c-e><left><bs>3<c-a><c-right><c-right><c-right><c-right><c-w>
+
+cmap <c-s>           <c-a><c-right><c-right><c-w>
+cmap <c-s-s>         <c-a><c-right><c-right><c-left><space><left>
+cmap <c-1>           <c-a><c-right><c-w>tabopen!<c-e>
+cmap <c-2>           <c-a><c-right><c-w>open<c-e>
+cmap <c-3>           <c-a><c-right><c-w>tabopen<c-e>
+cmap <c-a-1>         <c-a><c-right><right><c-u>js<space>dactyl_adjacent(<c-'><c-e><c-'>,1)<c-left><left><left>
+cmap <c-a-2>         <c-a><c-right><right><c-u>js<space>dactyl_adjacent(<c-'><c-e><c-'>,2)<c-left><left><left>
+cmap <c-a-3>         <c-a><c-right><right><c-u>js<space>dactyl_adjacent(<c-'><c-e><c-'>,3)<c-left><left><left>
+cmap <c-s-t>         <esc>:open<up><c-1>
+cmap <c-s-o>         <esc>:tabopen!<up><c-2>
+cmap <a-s>           <c-a><c-right><c-right><c-right><c-right><c-w>
+cmap <a-1>           <c-e><c-w><bs><bs><c-a><c-right><c-right><right><right><right><right><right><right><right><right><right><right><c-u>tabopen!<space><c-e>
+cmap <a-2>           <c-e><c-w><bs><bs><c-a><c-right><c-right><right><right><right><right><right><right><right><right><right><right><c-u>open<space><c-e>
+cmap <a-3>           <c-e><c-w><bs><bs><c-a><c-right><c-right><right><right><right><right><right><right><right><right><right><right><c-u>tabopen<space><c-e>
+cmap <a-s-1>         <c-e><left><bs>1<c-e><c-left><left><left>
+cmap <a-s-2>         <c-e><left><bs>2<c-e><c-left><left><left>
+cmap <a-s-3>         <c-e><left><bs>3<c-e><c-left><left><left>
+cmap <a-s-t>         <esc>:js<up><a-1>
+cmap <a-s-o>         <esc>:js<up><a-2>
+
+javascript <<EOF
+if(/win/i.test(navigator.platform))
+{
+    liberator.execute("nmap <c-a-1>         :<c-p><c-a><c-right><c-right><c-u>js<space>dactyl_adjacent(<c-'><c-e><c-'>,1)<c-a><c-right><c-right><right><right><right><right><right><right><right><right><right><right><space><left>")
+    liberator.execute("nmap <c-a-2>         :<c-p><c-a><c-right><c-right><c-u>js<space>dactyl_adjacent(<c-'><c-e><c-'>,2)<c-a><c-right><c-right><right><right><right><right><right><right><right><right><right><right><space><left>")
+    liberator.execute("nmap <c-a-3>         :<c-p><c-a><c-right><c-right><c-u>js<space>dactyl_adjacent(<c-'><c-e><c-'>,3)<c-a><c-right><c-right><right><right><right><right><right><right><right><right><right><right><space><left>")
+    liberator.execute("nmap <c-1>           :<c-p><c-a><c-right><c-right><c-u>tabopen!<space><space><left>")
+    liberator.execute("nmap <c-2>           :<c-p><c-a><c-right><c-right><c-u>open<space><space><left>")
+    liberator.execute("nmap <c-3>           :<c-p><c-a><c-right><c-right><c-u>tabopen<space><space><left>")
+    liberator.execute("nmap <a-s-1>         :<c-p><c-e><left><bs>1<c-a><c-right><c-right><c-right><c-right><c-w><space><left>")
+    liberator.execute("nmap <a-s-2>         :<c-p><c-e><left><bs>2<c-a><c-right><c-right><c-right><c-right><c-w><space><left>")
+    liberator.execute("nmap <a-s-3>         :<c-p><c-e><left><bs>3<c-a><c-right><c-right><c-right><c-right><c-w><space><left>")
+    liberator.execute("cmap <c-s>           <c-a><c-right><c-right><c-w><space><left>")
+    liberator.execute("cmap <c-s-s>         <c-a><c-right><space><left>")
+    liberator.execute("cmap <c-1>           <c-a><c-right><c-w>tabopen!<space><c-e>")
+    liberator.execute("cmap <c-2>           <c-a><c-right><c-w>open<space><c-e>")
+    liberator.execute("cmap <c-3>           <c-a><c-right><c-w>tabopen<space><c-e>")
+    liberator.execute("cmap <c-a-1>         <c-a><c-right><c-u>js<space>dactyl_adjacent(<c-'><c-e><c-'>,1)<c-left><left><left>")
+    liberator.execute("cmap <c-a-2>         <c-a><c-right><c-u>js<space>dactyl_adjacent(<c-'><c-e><c-'>,2)<c-left><left><left>")
+    liberator.execute("cmap <c-a-3>         <c-a><c-right><c-u>js<space>dactyl_adjacent(<c-'><c-e><c-'>,3)<c-left><left><left>")
+    liberator.execute("cmap <a-s>           <c-a><c-right><c-right><c-right><c-right><c-w><space><left>")
+}
+EOF
+
+javascript <<EOF
+(function() {
+    if(gPrefService.getPrefType('extensions.elemhidehelper.selectelement_key')!=0)
+    {
+        var selectelement_keys = gPrefService.getCharPref('extensions.elemhidehelper.selectelement_key').split(',')
+        var mappings_from_modifiers_to_keys = {
+            'Accel':'C-',
+            'Alt':'A-',
+            'Control':'C-',
+            'Ctrl':'C-',
+            'Meta':'A-',
+            'Shift':'S-',
+        }
+        for(var i=0; i<selectelement_keys.length; i++)
+        {
+            var e = selectelement_keys[i].replace(/^\s\s*/, '').replace(/\s\s*$/, '').split(/\s+/)
+            var modifier_1 = ''
+            var modifier_2 = ''
+            var key = ''
+            var map = ''
+            if(e.length == 1)
+            {
+                modifier_1 = ''
+                modifier_2 = ''
+                key = e[0]
+                map = 'nnoremap ' + key + ' ' + key + '<insert>'
+            }
+            else if(e.length == 2)
+            {
+                modifier_1 = mappings_from_modifiers_to_keys[e[0]]
+                modifier_2 = ''
+                key = e[1]
+                map = 'nnoremap <' + modifier_1 + key + '> <' + modifier_1 + key + '><insert>'
+            }
+            else if(e.length >= 3)
+            {
+                modifier_1 = mappings_from_modifiers_to_keys[e[0]]
+                modifier_2 = mappings_from_modifiers_to_keys[e[1]]
+                key = e[2]
+                map = 'nnoremap <' + modifier_1 + modifier_2 + key + '> <' + modifier_1 + modifier_2 + key + '><insert>'
+            }
+            liberator.execute(map)
+        }
+    }
+}
+)();
+EOF
+
+nnoremap <insert>        <insert>
+inoremap <insert>        <insert>
+cnoremap <insert>        <insert>
+"tnoremap <insert>        <insert>
+"bnoremap <insert>        <insert>
+
+nnoremap <bs>            <c-b>
+nnoremap <space>         <c-f>
+
+nnoremap <a-bs>          [[
+nnoremap <a-space>       ]]
+
+nnoremap <a-/>           /<s-insert><cr>
+nnoremap <a-h>           :noh<cr>
+
+"bnoremap <c-q>           <esc>:sbclose<cr>
+nnoremap <c-q>           <esc>:sbclose<cr>
+vnoremap <c-q>           <esc>:sbclose<cr>
+inoremap <c-q>           <esc>:sbclose<cr>
+"tnoremap <c-q>           <esc>:sbclose<cr>
+cnoremap <c-q>           <esc>:sbclose<cr>
+
+"nnoremap <a-esc>         <esc>i<esc>
+"inoremap <a-esc>         <esc>i<esc>
+"cnoremap <a-esc>         <esc>i<esc>
+nnoremap <a-esc>         <esc>:js stop_loading_page()<cr>
+inoremap <a-esc>         <esc>:js stop_loading_page()<cr>
+cnoremap <a-esc>         <esc>:js stop_loading_page()<cr>
+javascript <<EOF
+stop_loading_page = function() { gBrowser.getBrowserAtIndex(gBrowser.mCurrentTab._tPos).stop(); }
+EOF
+
+nnoremap <leader>aa      a
+nnoremap <leader>au      :extu!<cr>
+nnoremap <leader>bb      :bmarks<space>
+nnoremap <leader>bm      :bmarks ""<left>
+nnoremap <leader>bn      :bmarks ''<left>
+nnoremap <leader>da      :echo Date()<cr>
+nnoremap <leader>gc      :Silent gvim -n -u NONE -U NONE -X -c 'let @+=@*|q'<cr>
+"nnoremap <leader>gc      :Silent xclip -o -selection primary | xclip -i -selection clipboard<cr>
+"nnoremap <leader>gc      :Silent xsel -op | xsel -ib<cr>
+"nnoremap <leader>gc      :Silent pbpaste | pbcopy<cr>
+nnoremap <leader>se      :dia searchengines<cr>
+nnoremap <leader>ss      :!
+nnoremap <leader>vvv     :source ~/.vimperatorrc<cr>
+nnoremap <leader>GF      :set! view_source.editor.external!<cr>:set! view_source.editor.external<cr>
+nnoremap <leader>NH      :js toggle_hinet_proxy()<cr>
+"nnoremap <leader>NM      :js (gPrefService.getIntPref('network.proxy.type')==1?(gPrefService.clearUserPref('network.proxy.type')):(gPrefService.setIntPref('network.proxy.type',1)))<cr>:set! network.proxy.type<cr>
+nnoremap <leader>NM      :js (gPrefService.getIntPref('network.proxy.type')==1?(gPrefService.clearUserPref('network.proxy.type')):(gPrefService.setIntPref('network.proxy.type',1)))<cr>
+nnoremap <leader>NN      :js alert('network.proxy.http = '+gPrefService.getCharPref('network.proxy.http')+my_eol+'network.proxy.type = '+gPrefService.getIntPref('network.proxy.type'))<cr>
+nnoremap <leader>TT      :set! browser.tabs.insertRelatedAfterCurrent!<cr>:set! browser.tabs.insertRelatedAfterCurrent<cr>
+javascript <<EOF
+toggle_hinet_proxy = function()
+{
+    var url = gPrefService.getCharPref('network.proxy.http')
+    var port = gPrefService.getIntPref('network.proxy.http_port')
+    if(url=='proxy.hinet.net' && port==80)
+    {
+        gPrefService.clearUserPref('network.proxy.http')
+        gPrefService.clearUserPref('network.proxy.http_port')
+    }
+    else
+    {
+        gPrefService.setCharPref('network.proxy.http','proxy.hinet.net')
+        gPrefService.setIntPref('network.proxy.http_port',80)
+    }
+    liberator.execute('set! network.proxy.http')
+}
+EOF
+
+nnoremap \\tw1           :set encoding=Big5-HKSCS<cr>
+nnoremap \\tw2           :set encoding=Big5<cr>
+nnoremap \\cn1           :set encoding=gb18030<cr>
+nnoremap \\cn2           :set encoding=GB2312<cr>
+nnoremap \\jp1           :set encoding=Shift_JIS<cr>
+nnoremap \\jp2           :set encoding=EUC-JP<cr>
+nnoremap \\u8            :set encoding=UTF-8<cr>
+
+javascript <<EOF
+get_clipboard = function()
+{
+    return readFromClipboard()
+    //var clip = Components.classes["@mozilla.org/widget/clipboard;1"].getService(Components.interfaces.nsIClipboard)
+    //if(!clip) {return false;}
+    //var trans = Components.classes["@mozilla.org/widget/transferable;1"].createInstance(Components.interfaces.nsITransferable)
+    //if(!trans) {return false;}
+    //trans.addDataFlavor("text/unicode")
+    //clip.getData(trans, clip.kGlobalClipboard)
+    //var str = new Object()
+    //var strLength = new Object()
+    //trans.getTransferData("text/unicode", str, strLength)
+    //var pastetext=''
+    //if(str)
+    //{
+    //    str = str.value.QueryInterface(Components.interfaces.nsISupportsString)
+    //    pastetext = str.data.substring(0, strLength.value / 2)
+    //}
+    //return pastetext
+}
+set_clipboard = function(txt) { Components.classes["@mozilla.org/widget/clipboardhelper;1"].getService(Components.interfaces.nsIClipboardHelper).copyString(txt); }
+EOF
+
+"---------------------------------------------------"
+"   <leader>abc, <leader>ab<c-c>, <leader>ab<s-c>   "
+"---------------------------------------------------"
+javascript <<EOF
+set_related_ptr = function() { gBrowser.tabContainer.advanceSelectedTab(1, true); gBrowser.tabContainer.advanceSelectedTab(-1, true); }
+EOF
+
+nnoremap <leader>ac     :js open_about_config(true, true)<cr>
+nnoremap <leader>a<c-c> :js gBrowser.loadURI('about:config')<cr>
+nnoremap <leader>a<s-c> mJ:js open_about_config(false, true)<cr>
+javascript <<EOF
+open_about_config = function(background, adjacent)
+{
+    var url = 'about:config'
+    if( window.content.document.location.toString() == 'about:blank' ) { gBrowser.loadURI(url); return; }
+    set_related_ptr()
+    gBrowser.loadOneTab(url, {inBackground:background, relatedToCurrent:adjacent})
+}
+EOF
+
+nnoremap <leader>ao     :js open_about_addons(true, true)<cr>
+nnoremap <leader>a<c-o> :js gBrowser.loadURI('about:addons')<cr>
+nnoremap <leader>a<s-o> mJ:js open_about_addons(false, true)<cr>
+javascript <<EOF
+open_about_addons = function(background, adjacent)
+{
+    var url = 'about:addons'
+    if( window.content.document.location.toString() == 'about:blank' ) { gBrowser.loadURI(url); return; }
+    set_related_ptr()
+    gBrowser.loadOneTab(url, {inBackground:background, relatedToCurrent:adjacent})
+}
+EOF
+
+"nnoremap <leader>bo     :emenu Bookmarks.Organize Bookmarks…<cr>
+"nnoremap <leader>bo     :emenu Bookmarks.Show All Bookmarks<cr>
+"nnoremap <leader>bo     :js document.getElementById("Browser:ShowAllBookmarks").doCommand()<cr>
+nnoremap <leader>bo     :js open_bookmark_manager(true, true)<cr>
+nnoremap <leader>b<c-o> :js gBrowser.loadURI('chrome://browser/content/places/places.xul')<cr>
+nnoremap <leader>b<s-o> :js open_bookmark_manager(false, true)<cr>
+javascript <<EOF
+open_bookmark_manager = function(background, adjacent)
+{
+    var url = 'chrome://browser/content/places/places.xul'
+    if( window.content.document.location.toString() == 'about:blank' ) { gBrowser.loadURI(url); return; }
+    set_related_ptr()
+    gBrowser.loadOneTab(url, {inBackground:background, relatedToCurrent:adjacent})
+}
+EOF
+
+nnoremap <leader>dl     :js open_download_manager(true, true)<cr>
+nnoremap <leader>d<c-l> :js gBrowser.loadURI('chrome://browser/content/downloads/contentAreaDownloadsView.xul')<cr>
+nnoremap <leader>d<s-l> mJ:js open_download_manager(false, true)<cr>
+javascript <<EOF
+open_download_manager = function(background, adjacent)
+{
+    var url = 'chrome://browser/content/downloads/contentAreaDownloadsView.xul'
+    if( window.content.document.location.toString() == 'about:blank' ) { gBrowser.loadURI(url); return; }
+    set_related_ptr()
+    gBrowser.loadOneTab(url, {inBackground:background, relatedToCurrent:adjacent})
+}
+EOF
+
+nmap gf                 <leader>gf
+nmap gF                 <leader>gF
+nnoremap <leader>gf         :js open_view_source(true, true)<cr>
+nnoremap <leader>gF         mJ:js open_view_source(false, true)<cr>
+nnoremap <leader>g<c-f>     gf
+"nnoremap <leader>g<c-f>     :js gBrowser.loadURI('view-source:'+window.content.document.location.toString())<cr>
+nnoremap <leader>g<a-f>     <insert><c-u><insert>
+javascript <<EOF
+open_view_source = function(background, adjacent)
+{
+    var url = (/^view-source:/.test(window.content.document.location.toString())?window.content.document.location.toString().replace(/^view-source:/,''):'view-source:'+window.content.document.location.toString())
+    if( window.content.document.location.toString() == 'about:blank' ) { gBrowser.loadURI(url); return; }
+    set_related_ptr()
+    gBrowser.loadOneTab(url, {inBackground:background, relatedToCurrent:adjacent})
+}
+EOF
+
+nnoremap <leader>mm      :js open_help("",true,true)<left><left><left><left><left><left><left><left><left><left><left><left>
+nnoremap <leader>m<c-m>  :h<space>
+nnoremap <leader>m<s-m>  :js open_help("",false,true)<left><left><left><left><left><left><left><left><left><left><left><left><left>
+javascript <<EOF
+open_help = function(query, background, adjacent)
+{
+    if( window.content.document.location.toString() == 'about:blank' ) { liberator.execute('silent help '+query); return; }
+    var original_tab_position = gBrowser.mCurrentTab._tPos
+    var len_1 = gBrowser.mTabs.length
+    var right_tab_position = gBrowser.mCurrentTab._tPos + 1
+    liberator.execute('silent tab help '+query)
+    var len_2 = gBrowser.mTabs.length
+    if( len_2 > len_1 )
+    {
+        if(adjacent) { gBrowser.moveTabTo(gBrowser.mTabs[gBrowser.mCurrentTab._tPos],right_tab_position) }
+        if(background) { gBrowser.mTabContainer.selectedIndex = original_tab_position }
+    }
+}
+EOF
+
+"-------------------"
+"   x0, x$, xx, X   "
+"-------------------"
+nnoremap <leader>d0  :js close_tabs(0, gBrowser.mCurrentTab._tPos)<cr>
+nnoremap <leader>d$  :js close_tabs(gBrowser.mCurrentTab._tPos, gBrowser.mTabs.length-1)<cr>
+nnoremap <leader>dd  :js close_tabs(0, gBrowser.mTabs.length-1)<cr>
+nnoremap <leader>D   :js close_tabs(0, gBrowser.mTabs.length-1)<cr>
+"nnoremap <leader>D   :tabclose *<cr>
+javascript <<EOF
+close_tabs = function(start, end) { for(var i=end; i>=start; i--) { gBrowser.removeTab(gBrowser.mTabs[i]) } }
+EOF
+
+nnoremap <leader>y0  :js yank_uri(0, gBrowser.mCurrentTab._tPos)<cr>
+nnoremap <leader>y$  :js yank_uri(gBrowser.mCurrentTab._tPos, gBrowser.mTabs.length-1)<cr>
+nnoremap <leader>yy  :js yank_uri(0, gBrowser.mTabs.length-1)<cr>
+nnoremap <leader>Y   :js yank_uri(0, gBrowser.mTabs.length-1)<cr>
+"nnoremap <leader>Y   mJ:js session_urls=''<cr>:tabdo :js session_urls = session_urls + buffer.URI + my_eol <cr>:js set_clipboard(session_urls.replace(/my_eol$/,''))<cr>`J
+"nnoremap <leader>Y   mJ:js session_urls=''<cr>:tabdo :js session_urls = session_urls + gBrowser.currentURI.spec + my_eol <cr>:js set_clipboard(session_urls.replace(/my_eol$/,''))<cr>`J
+javascript <<EOF
+yank_uri = function(start, end)
+{
+    var to_clipboard = ''
+    //for(var i=start; i<=end; i++) { to_clipboard = to_clipboard + gBrowser.tabContainer.childNodes[i].linkedBrowser.currentURI.spec + ((i!=end)?my_eol:'') }
+    for(var i=start; i<=end; i++) { to_clipboard = to_clipboard + gBrowser.getBrowserAtIndex(i).currentURI.spec + ((i!=end)?my_eol:'') }
+    set_clipboard(to_clipboard)
+}
+EOF
+
+"--------------------------------"
+"   Misc Mappings: <leader>XXX   "
+"--------------------------------"
+nnoremap <leader>tm  :tabmove!<space>0
+nnoremap <leader>mtt :js moveTabTo()<left>
+nnoremap <leader>mtl :js moveTabTo(,gBrowser.mCurrentTab._tPos-1)<c-left><c-left><c-left><c-left><left>
+nnoremap <leader>mtr :js moveTabTo(,gBrowser.mCurrentTab._tPos+1)<c-left><c-left><c-left><c-left><left>
+javascript <<EOF
+moveTabTo = function(from, to) { // indices start from zero, same as gBrowser does
+    from = (from<0?gBrowser.mTabs.length-1:from)
+    to = (to>gBrowser.mTabs.length-1?gBrowser.mCurrentTab._tPos:to)
+    gBrowser.moveTabTo(gBrowser.mTabs[from],to)
+}
+EOF
+
+nnoremap <leader>uq :js removeDuplicateTabs()<cr>
+javascript <<EOF
+removeDuplicateTabs = function(start, end, protected_tabs)
+{
+    var start = start || 0
+    var end = end || (gBrowser.mTabs.length - 1)
+    if(start >= end) { return; }
+    var protected_tabs = protected_tabs || [gBrowser.mCurrentTab._tPos]
+
+    var t = []
+    for(var i=start; i<=end; i++) { t.push(i) }
+    var dup = []
+    for(var i=0; i<=t.length-2; i++)
+    {
+        if(t[i] == -1) {continue;}
+        for(var j=i+1; j<=t.length-1; j++)
+        {
+            if(t[i] == -1 || t[j] == -1) {continue;}
+            if(gBrowser.getBrowserAtIndex(t[i]).currentURI.spec == gBrowser.getBrowserAtIndex(t[j]).currentURI.spec)
+            {
+                var kill = (protected_tabs.indexOf(t[j])==-1?t[j]:(protected_tabs.indexOf([i])==-1?t[i]:-1))
+                if(kill != -1)
+                {
+                    dup.push(t[kill])
+                    t[kill]=-1
+                }
+            }
+        }
+    }
+    dup.sort(function(a,b) {return a-b})
+    for(var i=dup.length-1; i>=0; i--) { gBrowser.removeTab(gBrowser.mTabs[dup[i]]); }
+}
+EOF
+
+"-----------------"
+"   Toggle Bars   "
+"-----------------"
+" For id's of toolbar elements, see: https://developer.mozilla.org/en/Theme_changes_in_Firefox_4
+nnoremap <a-b> :js toggle_element('PersonalToolbar')<cr>
+nnoremap <a-c> :js toggle_element('liberator-bottombar')<cr>
+nnoremap <a-m> :js toggle_element('toolbar-menubar')<cr>
+nnoremap <a-n> :js toggle_element('nav-bar')<cr>
+nnoremap <a-t> :js toggle_element('TabsToolbar')<cr>
+javascript  <<EOF
+vimperator_version = parseFloat(liberator.version.split(' ')[0])
+if(vimperator_version > 3)
+{
+    toggle_element = function(name)
+    {
+        if(name == 'toolbar-menubar') {liberator.execute('set gui=inv'+'menu');}
+        if(name == 'nav-bar') {liberator.execute('set gui=inv'+'navigation');}
+        if(name == 'TabsToolbar') {liberator.execute('set gui=invtabs');}
+        if(name == 'liberator-bottombar')
+        {
+            var bb = document.getElementById('liberator-bottombar')
+            if(!bb) {return;}
+            bb.style.height = (bb.style.height == '') ? '0px' : ''
+            bb.style.overflow = (bb.style.height == '') ? '' : 'hidden'
+        }
+    }
+    //liberator.execute('set gui=none,tabs')
+    liberator.execute('set gui=none')
+    liberator.execute('set notabnumbers')
+    liberator.execute('set noscrollbars')
+    liberator.execute('nnoremap <c-s-f11> :set invfullscreen<cr>')
+
+    liberator.execute('set noautocomplete')
+    liberator.execute('set hintchars=";asdfjkluiopnmqwerzxcv"')
+    //liberator.execute('nnoremap <leader>bo :emenu Bookmarks.Show All Bookmarks<cr>')
+}
+else
+{
+    toggle_element = function(name) { document.getElementById(name).collapsed ^= 1; }
+    liberator.execute('set guioptions+=nbr')
+    liberator.execute('nnoremap <c-s-f11> :js toggle_fullscreen()<cr>')
+    toggle_fullscreen = function()
+    {
+        is_fullscreen = (typeof is_fullscreen=='undefined'?0:is_fullscreen)
+        if(is_fullscreen == 0)
+        {
+            liberator.execute('set fullscreen')
+            is_fullscreen = 1
+        }
+        else
+        {
+            liberator.execute('set nofullscreen')
+            is_fullscreen = 0
+        }
+    }
+    //liberator.execute('nnoremap <leader>bo :emenu Bookmarks.Organize Bookmarks…<cr>')
+}
+EOF
+
+"-------------"
+"   Zooming   "
+"-------------"
+nnoremap zi zI
+nnoremap zm zM
+nnoremap zo zO
+nnoremap zr zR
+nnoremap zz zZ
+
+nnoremap zI zi
+nnoremap zM zm
+nnoremap zO zo
+nnoremap zR zr
+nnoremap zZ zz
+
+nnoremap -- + zI
+nnoremap -- - zO
+
+"---------------------------"
+"   User-Defined Commands   "
+"---------------------------"
+command! -nargs=* Silent execute ':silent !'+<q-args>
+command! cal :js liberator.echo(<datepicker type="grid" xmlns={XUL}/>)
+
+"-------------"
+"   Privacy   "
+"-------------"
+"set sanitizeitems=commandline,macros,marks
+"autocmd VimperatorLeave .* sa!
+"autocmd VimperatorLeave .* delmacros!
+"autocmd VimperatorLeave .* delmarks!
+"autocmd VimperatorLeave .* delqmarks!
+autocmd VimperatorLeave .* js my_sanitize()
+javascript <<EOF
+my_sanitize = function()
+{
+    var file = Components.classes['@mozilla.org/file/local;1'].createInstance(Components.interfaces.nsILocalFile)
+    var env = Components.classes["@mozilla.org/process/environment;1"].getService(Components.interfaces.nsIEnvironment)
+    if( (/win/i.test(navigator.platform)) && env.exists('HOMEDRIVE') && env.exists('HOMEPATH') )
+    {
+        file.initWithPath(env.get('HOMEDRIVE') + env.get('HOMEPATH') + '\\vimperator\\info\\default')
+    }
+    else if( env.exists('HOME') )
+    {
+        file.initWithPath(env.get('HOME') + '/.vimperator/info/default')
+    }
+    (file.exists()?file.remove(true):undefined)
+}
+EOF
+
+"--------------------------------------------"
+"   Invoke Pass-Through Mode on these URIs   "
+"--------------------------------------------"
+"autocmd LocationChange .* js modes.passAllKeys = false
+"autocmd LocationChange chrome://browser/content/places/places.xul js modes.passAllKeys = true
+
+"-----------------------------------------"
+"   (Deprecated) <c-x> in places is Cut   "
+"-----------------------------------------"
+"autocmd LocationChange chrome://browser/content/places/places.xul nnoremap <c-x> <insert><c-x><insert>
+"autocmd LocationChange ^[^c].* nnoremap <c-x> <c-x>
+
+"----------------------------------------------------------------"
+"   (Deprecated) Message Timeout (Only Needed in vimperatorrc)   "
+"----------------------------------------------------------------"
+"set messagetimeout=0
+"nnoremap A          :set messagetimeout=10000<cr>:delbmarks<cr>:set messagetimeout=0<cr>
+"nnoremap n          :set messagetimeout=10000<cr>n:set messagetimeout=0<cr>
+"nnoremap N          :set messagetimeout=10000<cr>N:set messagetimeout=0<cr>
+"nnoremap y          :set messagetimeout=10000<cr>y:set messagetimeout=0<cr>
+
+"---------------------------------------"
+"   (Deprecated) Start in Normal Mode   "
+"---------------------------------------"
+"javascript <<EOF
+"pressESC = function() {var evt = document.createEvent("KeyEvents"); evt.initKeyEvent("keypress", true, true, null, false, false, false, false, evt.DOM_VK_ESCAPE, 27); document.documentElement.dispatchEvent(evt);}
+"liberator.execute('autocmd VimperatorEnter .* js pressESC()')
+"EOF
+
+"-------------"
+"   Styling   "
+"-------------"
+highlight! CmdLine              background-color:#3f3f3f; color:#ffffff
+highlight! CompItem[selected]   background-color:#2f4f4f; color:#ffffff
+highlight! ErrorMsg             background-color:#3f3f3f; color:#ffffff
+highlight! InfoMsg              background-color:#3f3f3f; color:#ffffff
+highlight! MoreMsg              background-color:#3f3f3f; color:#ffffff
+highlight! Normal               background-color:#3f3f3f; color:#ffffff
+highlight! WarningMsg           background-color:#3f3f3f; color:#ffffff
