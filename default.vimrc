@@ -858,6 +858,20 @@ else
     autocmd FileType html nnoremap <silent> <buffer> <f10> <esc>:W<cr>:Silent firefox '%' >/dev/null 2>&1 &<cr>
 endif
 
+""" C/C++
+if has('unix')
+    if !has('gui_running')
+        autocmd FileType c,cpp nnoremap <silent> <buffer> <f10> <esc>:W<cr>:Silent screen sh -c ''\''./%:r.out'\'' ; printf "\%s\n" "press ENTER to continue..."; read -r tmp;'<cr>
+        autocmd FileType c,cpp nnoremap <silent> <buffer> <f11> <esc>:W<cr>:Silent screen sh -c 'cc '\''%'\'' ; printf "\%s\n" "press ENTER to continue..."; read -r tmp;'<cr>
+    else
+        autocmd FileType c,cpp nnoremap <silent> <buffer> <f10> <esc>:W<cr>:Silent <c-r>=g:my_xterm<cr> sh -c ''\''./%:r.out'\'' ; printf "\%s\n" "press ENTER to continue..."; read -r tmp;' &<cr>
+        autocmd FileType c,cpp nnoremap <silent> <buffer> <f11> <esc>:W<cr>:Silent <c-r>=g:my_xterm<cr> sh -c 'cc '\''%'\'' ; printf "\%s\n" "press ENTER to continue..."; read -r tmp;' &<cr>
+    endif
+elseif s:win
+    autocmd FileType c,cpp nnoremap <silent> <buffer> <f10> <esc>:W<cr>:Silent start cmd.exe /c "%:r.exe" & pause<cr>
+    autocmd FileType c,cpp nnoremap <silent> <buffer> <f11> <esc>:W<cr>:Silent start cmd.exe /c cc "%" & pause<cr>
+endif
+
 """ Java
 if has('quickfix')
     autocmd FileType java set makeprg=javac\ -d\ .\ %
@@ -865,15 +879,15 @@ if has('quickfix')
 endif
 if has('unix')
     if !has('gui_running')
-        autocmd FileType java nnoremap <silent> <buffer> <f9> <esc>:W<cr>:Silent screen sh -c 'javac '\''%'\'' ; printf "\%s\n" "press ENTER to continue..."; read -r tmp;'<cr>
         autocmd FileType java nnoremap <silent> <buffer> <f10> <esc>:W<cr>:Silent screen sh -c 'java '\''%:r'\'' ; printf "\%s\n" "press ENTER to continue..."; read -r tmp;'<cr>
+        autocmd FileType java nnoremap <silent> <buffer> <f11> <esc>:W<cr>:Silent screen sh -c 'javac '\''%'\'' ; printf "\%s\n" "press ENTER to continue..."; read -r tmp;'<cr>
     else
-        autocmd FileType java nnoremap <silent> <buffer> <f9> <esc>:W<cr>:Silent <c-r>=g:my_xterm<cr> sh -c 'javac '\''%'\'' ; printf "\%s\n" "press ENTER to continue..."; read -r tmp;' &<cr>
         autocmd FileType java nnoremap <silent> <buffer> <f10> <esc>:W<cr>:Silent <c-r>=g:my_xterm<cr> sh -c 'java '\''%:r'\'' ; printf "\%s\n" "press ENTER to continue..."; read -r tmp;' &<cr>
+        autocmd FileType java nnoremap <silent> <buffer> <f11> <esc>:W<cr>:Silent <c-r>=g:my_xterm<cr> sh -c 'javac '\''%'\'' ; printf "\%s\n" "press ENTER to continue..."; read -r tmp;' &<cr>
     endif
 elseif s:win
-    autocmd FileType java nnoremap <silent> <buffer> <f9> <esc>:W<cr>:Silent start cmd.exe /c javac "%" & pause<cr>
     autocmd FileType java nnoremap <silent> <buffer> <f10> <esc>:W<cr>:Silent start cmd.exe /c java "%:r" & pause<cr>
+    autocmd FileType java nnoremap <silent> <buffer> <f11> <esc>:W<cr>:Silent start cmd.exe /c javac "%" & pause<cr>
 endif
 
 """ JavaScript
@@ -902,7 +916,7 @@ endif
 if has('quickfix')
     " compile .py to .pyc
     autocmd FileType python set makeprg=python\ -c\ \"import\ py_compile,sys;\ sys.stderr=sys.stdout;\ py_compile.compile(ur'%')\"
-    "autocmd FileType python nnoremap <silent> <f9> <esc>:W<cr>:make<cr>
+    "autocmd FileType python nnoremap <silent> <f11> <esc>:W<cr>:make<cr>
     autocmd FileType python set errorformat=%C\ %.%#,%A\ \ File\ \"%f\"\\,\ line\ %l%.%#,%Z%[%^\ ]%\\@=%m
 endif
 "autocmd FileType python copen " open the compilation window
@@ -966,9 +980,9 @@ if HasPlugin('ftplugin/python/pyflakes*') | let g:pyflakes_use_quickfix=0 | endi
 "nnoremap <leader>t :lcd %:p:h<cr>:Silent <c-r>=g:my_xterm<cr> sh -c "cd <c-r>=shellescape(escape(getcwd(),'"'),1)<cr>; exec $SHELL" &<cr>
 nnoremap <leader>t :Silent <c-r>=g:my_xterm<cr> sh -c "cd <c-r>=shellescape(escape(expand('%:p:h'),'"'),1)<cr>; exec $SHELL" &<cr>
 
-" map <f9>/<f10> in insert mode
-autocmd BufNewFile,BufReadPost * if (mapcheck('<f9>') != '') | execute 'imap <silent> <buffer> <f9> <esc><f9>' | endif
+" map <f10>/<f11> in insert mode
 autocmd BufNewFile,BufReadPost * if (mapcheck('<f10>') != '') | execute 'imap <silent> <buffer> <f10> <esc><f10>' | endif
+autocmd BufNewFile,BufReadPost * if (mapcheck('<f11>') != '') | execute 'imap <silent> <buffer> <f11> <esc><f11>' | endif
 
 " mkview and loadview automatically
 if has('mksession')
