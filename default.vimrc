@@ -916,7 +916,7 @@ endif
 if has('quickfix')
     " compile .py to .pyc
     autocmd FileType python set makeprg=python\ -c\ \"import\ py_compile,sys;\ sys.stderr=sys.stdout;\ py_compile.compile(ur'%')\"
-    "autocmd FileType python nnoremap <silent> <f11> <esc>:W<cr>:make<cr>
+    autocmd FileType python nnoremap <silent> <f11> <esc>:W<cr>:make<cr>
     autocmd FileType python set errorformat=%C\ %.%#,%A\ \ File\ \"%f\"\\,\ line\ %l%.%#,%Z%[%^\ ]%\\@=%m
 endif
 "autocmd FileType python copen " open the compilation window
@@ -931,7 +931,7 @@ if has('unix')
     "else
         "autocmd FileType python nnoremap <silent> <buffer> <f10> <esc>:W<cr>:Silent <c-r>=g:my_xterm<cr> sh -c 'python '\''%'\'' ; printf "\%s\n" "press ENTER to continue..."; read -r tmp;' &<cr>
     "endif
-elseif s:win " save->exec
+elseif s:win " save -> exec
     " in cmd.exe
     "autocmd FileType python nnoremap <silent> <buffer> <f10> <esc>:W<cr>:Silent start cmd.exe /c C:\\cygwin\\bin\\python "%" & pause<cr>
     autocmd FileType python nnoremap <silent> <buffer> <f10> <esc>:W<cr>:Silent start cmd.exe /c python "%" & pause<cr>
@@ -975,6 +975,17 @@ endif
 
 " PyFlakes
 if HasPlugin('ftplugin/python/pyflakes*') | let g:pyflakes_use_quickfix=0 | endif " disable the use of quickfix support
+
+""" SQL
+if has('unix')
+    if !has('gui_running')
+        autocmd FileType sql nnoremap <silent> <buffer> <f10> <esc>:W<cr>:Silent screen sh -c 'sqlite3 '\''%:r.db'\'' < '\''%'\'' ; printf "\%s\n" "press ENTER to continue..."; read -r tmp;'<cr>
+    else
+        autocmd FileType sql nnoremap <silent> <buffer> <f10> <esc>:W<cr>:Silent <c-r>=g:my_xterm<cr> sh -c 'sqlite3 '\''%:r.db'\'' < '\''%'\'' ; printf "\%s\n" "press ENTER to continue..."; read -r tmp;' &<cr>
+    endif
+elseif s:win
+    autocmd FileType sql nnoremap <silent> <buffer> <f10> <esc>:W<cr>:Silent start cmd.exe /c start "" /b sqlite3 "%:r.db" < "%" & pause<cr>
+endif
 
 " open terminal emulator in current working directory
 "nnoremap <leader>t :lcd %:p:h<cr>:Silent <c-r>=g:my_xterm<cr> sh -c "cd <c-r>=shellescape(escape(getcwd(),'"'),1)<cr>; exec $SHELL" &<cr>
