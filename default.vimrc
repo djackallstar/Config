@@ -650,7 +650,7 @@ vnoremap < <gv
 vnoremap > >gv
 
 " remember last cursor position when quitting vim
-autocmd BufReadPost * if line("'\"") >= 1 && line("'\"") <= line('$') | execute "normal! g`\"" | endif
+autocmd BufReadPost * if line("'\"") >= 1 && line("'\"") <= line('$') | execute "normal! g`\"" | execute "normal! zz" | endif
 
 "-- External Commands --"
 
