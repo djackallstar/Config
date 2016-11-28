@@ -672,20 +672,20 @@ EOF
 "-------------"
 "   Zooming   "
 "-------------"
-nnoremap zi ZI
-nnoremap zm ZM
-nnoremap zo ZO
-nnoremap zr ZR
-nnoremap zz zZ
+"nnoremap zi ZI
+"nnoremap zm ZM
+"nnoremap zo ZO
+"nnoremap zr ZR
+"nnoremap zz zZ
 
-nnoremap ZI zi
-nnoremap ZM zm
-nnoremap ZO zo
-nnoremap ZR zr
-nnoremap zZ zz
+"nnoremap ZI zi
+"nnoremap ZM zm
+"nnoremap ZO zo
+"nnoremap ZR zr
+"nnoremap zZ zz
 
-nnoremap -- + ZI
-nnoremap -- - ZO
+"nnoremap -- + ZI
+"nnoremap -- - ZO
 
 "---------------------------"
 "   User-Defined Commands   "
