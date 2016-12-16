@@ -1,3 +1,4 @@
+cd
 "set editor="gvim -f"
 "set runtimepath=~/.vimperator
 set hlsearch
