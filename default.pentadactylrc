@@ -1,3 +1,4 @@
+cd
 "set editor="gvim -f"
 set hlfind
 set noincfind
