@@ -652,6 +652,9 @@ javascript  <<EOF
 vimperator_version = parseFloat(liberator.version.split(' ')[0])
 if(vimperator_version > 3)
 {
+    if(vimperator_version >= 3.16) {
+        liberator.execute('set newtaburl=about:blank')
+    }
     toggle_element = function(name)
     {
         if(name == 'toolbar-menubar') {liberator.execute('set gui=inv'+'menu');}
