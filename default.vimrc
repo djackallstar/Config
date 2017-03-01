@@ -901,6 +901,17 @@ elseif s:win
     autocmd FileType javascript nnoremap <silent> <buffer> <f10> <esc>:W<cr>:Silent start cmd.exe /c js "%" & pause<cr>
 endif
 
+""" PHP
+if has('unix')
+    if !has('gui_running')
+        autocmd FileType php nnoremap <silent> <buffer> <f10> <esc>:W<cr>:Silent screen sh -c 'php -f '\''%'\'' ; printf "\%s\n" "press ENTER to continue..."; read -r tmp;'<cr>
+    else
+        autocmd FileType php nnoremap <silent> <buffer> <f10> <esc>:W<cr>:Silent <c-r>=g:my_xterm<cr> sh -c 'php -f '\''%'\'' ; printf "\%s\n" "press ENTER to continue..."; read -r tmp;' &<cr>
+    endif
+elseif s:win
+    autocmd FileType php nnoremap <silent> <buffer> <f10> <esc>:W<cr>:Silent start cmd.exe /c php -f "%" & pause<cr>
+endif
+
 """ Perl
 if has('unix')
     if !has('gui_running')
