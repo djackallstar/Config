@@ -862,14 +862,14 @@ endif
 if has('unix')
     if !has('gui_running')
         autocmd FileType c,cpp nnoremap <silent> <buffer> <f10> <esc>:W<cr>:Silent screen sh -c ''\''./%:r.out'\'' ; printf "\%s\n" "press ENTER to continue..."; read -r tmp;'<cr>
-        autocmd FileType c,cpp nnoremap <silent> <buffer> <f11> <esc>:W<cr>:Silent screen sh -c 'c++ '\''%'\'' ; printf "\%s\n" "press ENTER to continue..."; read -r tmp;'<cr>
+        autocmd FileType c,cpp nnoremap <silent> <buffer> <f11> <esc>:W<cr>:Silent screen sh -c 'c++ '\''%'\'' -o '\''./%:r.out'\'' ; printf "\%s\n" "press ENTER to continue..."; read -r tmp;'<cr>
     else
         autocmd FileType c,cpp nnoremap <silent> <buffer> <f10> <esc>:W<cr>:Silent <c-r>=g:my_xterm<cr> sh -c ''\''./%:r.out'\'' ; printf "\%s\n" "press ENTER to continue..."; read -r tmp;' &<cr>
-        autocmd FileType c,cpp nnoremap <silent> <buffer> <f11> <esc>:W<cr>:Silent <c-r>=g:my_xterm<cr> sh -c 'c++ '\''%'\'' ; printf "\%s\n" "press ENTER to continue..."; read -r tmp;' &<cr>
+        autocmd FileType c,cpp nnoremap <silent> <buffer> <f11> <esc>:W<cr>:Silent <c-r>=g:my_xterm<cr> sh -c 'c++ '\''%'\'' -o '\''./%:r.out'\''  ; printf "\%s\n" "press ENTER to continue..."; read -r tmp;' &<cr>
     endif
 elseif s:win
     autocmd FileType c,cpp nnoremap <silent> <buffer> <f10> <esc>:W<cr>:Silent start cmd.exe /c "%:r.exe" & pause<cr>
-    autocmd FileType c,cpp nnoremap <silent> <buffer> <f11> <esc>:W<cr>:Silent start cmd.exe /c c++ "%" & pause<cr>
+    autocmd FileType c,cpp nnoremap <silent> <buffer> <f11> <esc>:W<cr>:Silent start cmd.exe /c c++ "%" -o "%:r.exe" & pause<cr>
 endif
 
 """ Java
