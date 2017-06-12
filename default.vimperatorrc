@@ -741,11 +741,11 @@ my_sanitize = function()
     var env = Components.classes["@mozilla.org/process/environment;1"].getService(Components.interfaces.nsIEnvironment)
     if( (/win/i.test(navigator.platform)) && env.exists('HOMEDRIVE') && env.exists('HOMEPATH') )
     {
-        file.initWithPath(env.get('HOMEDRIVE') + env.get('HOMEPATH') + '\\vimperator\\info\\default')
+        file.initWithPath(env.get('HOMEDRIVE') + env.get('HOMEPATH') + '\\vimperator\\info')
     }
     else if( env.exists('HOME') )
     {
-        file.initWithPath(env.get('HOME') + '/.vimperator/info/default')
+        file.initWithPath(env.get('HOME') + '/.vimperator/info')
     }
     (file.exists()?file.remove(true):undefined)
 }
