@@ -388,8 +388,8 @@ endif
 " move cursor left/right the length of textarea width
 function! Zh_n()
     let l:w=GetTextAreaWidth()
-    let a:text_to_current_position=getline('.')[0:col('.')-1]
-    if len(a:text_to_current_position) > l:w | call cursor(line('.'), col('.')-l:w) | else | call cursor(line('.'),1) | endif
+    let l:text_to_current_position=getline('.')[0:col('.')-1]
+    if len(l:text_to_current_position) > l:w | call cursor(line('.'), col('.')-l:w) | else | call cursor(line('.'),1) | endif
 endfunction
 function! Zl_n()
     call cursor(line('.'), col('.')+GetTextAreaWidth())
